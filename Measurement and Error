@@ -1,0 +1,1093 @@
+<!--
+Project: Measurement and Error Interactive Simulator (Canvas Version)
+Developer: opensimlab.org
+Author: AI Assistant
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Measurement and Error Simulator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ensuring basic resets and clean fonts */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Style for the canvas to ensure it behaves responsively */
+        canvas {
+            display: block;
+            width: 100%;
+            touch-action: none;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 text-lg flex flex-col min-h-screen">
+
+    <header class="max-w-5xl mx-auto w-full p-6 flex flex-col sm:flex-row justify-between items-center mb-4">
+        <h1 class="text-3xl font-black text-slate-800 mb-4 sm:mb-0" data-en="Measurement & Error" data-th="การวัดและความคลาดเคลื่อน">
+            Measurement & Error
+        </h1>
+        <div class="flex bg-slate-100 p-1.5 rounded-xl border border-slate-200 shadow-sm">
+            <button id="btn-lang-en" onclick="setLang('en')" class="px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 bg-white text-blue-600 shadow-sm">
+                EN
+            </button>
+            <button id="btn-lang-th" onclick="setLang('th')" class="px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50">
+                TH
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto w-full px-4 flex-grow space-y-8">
+        
+        <!-- Section 1: Theory and Rules -->
+        <section class="p-8 bg-white rounded-2xl shadow-lg border-t-8 border-blue-400 h-auto overflow-visible">
+            <h2 class="text-2xl font-bold mb-6 text-blue-700 flex items-center gap-2" data-en="Theory: Measurement and Uncertainty" data-th="ทฤษฎี: หลักการวัดและความคลาดเคลื่อน">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                Theory: Measurement and Uncertainty
+            </h2>
+            
+            <div class="space-y-6 text-slate-700 leading-relaxed">
+                <p data-en="In science, measurement is the process of finding the physical quantity of an object using an instrument. However, no measurement is perfectly exact. There is always a limitation to how precisely we can read a tool." 
+                   data-th="ในทางวิทยาศาสตร์ การวัดคือกระบวนการหาค่าปริมาณทางกายภาพของวัตถุโดยใช้เครื่องมือ อย่างไรก็ตาม ไม่มีผลการวัดใดที่แม่นยำสมบูรณ์แบบ เครื่องมือทุกชิ้นมีข้อจำกัดเรื่องความละเอียด">
+                    In science, measurement is the process of finding the physical quantity of an object using an instrument. However, no measurement is perfectly exact. There is always a limitation to how precisely we can read a tool.
+                </p>
+                
+                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200 shadow-sm">
+                    <h3 class="font-bold text-indigo-800 mb-3" data-en="The Golden Rule of Reading Scales:" data-th="กฎเหล็กของการอ่านสเกล:">
+                        The Golden Rule of Reading Scales:
+                    </h3>
+                    <p data-en="When you read an analog scale, you must record **all the certain digits** (the ones exactly on the lines) plus **one estimated digit** (guessing the space between the smallest lines)." 
+                       data-th="เมื่อคุณอ่านค่าจากสเกลแบบเข็มหรือขีด คุณต้องบันทึก **ตัวเลขที่แน่นอนทั้งหมด** (อ่านจากขีดสเกลโดยตรง) บวกกับ **ตัวเลขที่คาดคะเนอีก 1 ตำแหน่ง** (กะระยะห่างระหว่างขีดที่เล็กที่สุดเสมอ)">
+                        When you read an analog scale, you must record <strong>all the certain digits</strong> (the ones exactly on the lines) plus <strong>one estimated digit</strong> (guessing the space between the smallest lines).
+                    </p>
+                </div>
+
+                <ul class="list-disc pl-8 space-y-3 mt-4 text-slate-700">
+                    <li>
+                        <strong data-en="Smallest Division:" data-th="ความละเอียดสเกล (Smallest Division):">Smallest Division:</strong> 
+                        <span data-en="The value of the smallest gap marked on the tool." data-th="ช่องที่เล็กที่สุดที่มีขีดบอกบนเครื่องมือวัด">The value of the smallest gap marked on the tool.</span>
+                    </li>
+                    <li>
+                        <strong data-en="Uncertainty:" data-th="ความคลาดเคลื่อน (Uncertainty):">Uncertainty:</strong> 
+                        <span data-en="Varies by instrument. For analog scales, it is generally half of the smallest division (Smallest Division ÷ 2) due to the limit of visual estimation. For time measurements, it is based on human reaction time (often ±0.20 s)." data-th="แตกต่างกันตามเครื่องมือ สำหรับสเกลแบบขีด (Analog) มักใช้ค่าครึ่งหนึ่งของสเกลที่เล็กที่สุด (ความละเอียดสเกล ÷ 2) เนื่องจากข้อจำกัดในการคาดคะเนด้วยสายตา ส่วนการจับเวลาจะขึ้นอยู่กับปฏิกิริยาตอบสนองของบุคคล (มักใช้ ±0.20 วินาที)">Varies by instrument. For analog scales, it is generally half of the smallest division (Smallest Division ÷ 2) due to the limit of visual estimation. For time measurements, it is based on human reaction time (often ±0.20 s).</span>
+                    </li>
+                    <li>
+                        <strong data-en="Significant Figures:" data-th="เลขนัยสำคัญ (Significant Figures):">Significant Figures:</strong> 
+                        <span data-en="The number of reliable digits in a measurement, which includes all certain digits plus one estimated digit." data-th="จำนวนตัวเลขที่มีความหมายจากการวัด ซึ่งประกอบด้วยตัวเลขที่อ่านได้แน่นอนทั้งหมด รวมกับตัวเลขที่คาดคะเนอีก 1 ตัว">The number of reliable digits in a measurement, which includes all certain digits plus one estimated digit.</span>
+                    </li>
+                </ul>
+
+                <div class="bg-slate-100 p-6 rounded-xl border border-slate-200 shadow-sm mt-6">
+                    <h3 class="font-bold text-slate-800 mb-3" data-en="Common Causes of Uncertainty:" data-th="สาเหตุหลักของความคลาดเคลื่อน:">
+                        Common Causes of Uncertainty:
+                    </h3>
+                    <ul class="list-disc pl-8 space-y-2 text-slate-700 text-base">
+                        <li data-en="<strong>Limit of Reading (Interpolation):</strong> The human eye can only estimate the distance between two marks so accurately." data-th="<strong>ขีดจำกัดของการอ่านสเกล (Interpolation):</strong> ข้อจำกัดของสายตามนุษย์ในการกะระยะห่างระหว่างสองขีดสเกล"><strong>Limit of Reading (Interpolation):</strong> The human eye can only estimate the distance between two marks so accurately.</li>
+                        <li data-en="<strong>Parallax Error:</strong> Looking at a scale from an angle rather than straight on (important for rulers and liquid levels)." data-th="<strong>ความคลาดเคลื่อนมุมมอง (Parallax Error):</strong> การมองสเกลเอียง ไม่ตั้งฉากกับระดับสายตา (พบบ่อยในการอ่านไม้บรรทัดและระดับของเหลว)"><strong>Parallax Error:</strong> Looking at a scale from an angle rather than straight on (important for rulers and liquid levels).</li>
+                        <li data-en="<strong>Human Reaction Time:</strong> Delay between observing an event and pressing a button (critical for timing)." data-th="<strong>ปฏิกิริยาตอบสนองของบุคคล (Human Reaction Time):</strong> ความล่าช้าในการสั่งการกล้ามเนื้อเมื่อสังเกตเห็นเหตุการณ์ (มีผลมากในการจับเวลาด้วยมือ)"><strong>Human Reaction Time:</strong> Delay between observing an event and pressing a button (critical for timing).</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Ruler Simulator -->
+        <section class="p-8 bg-white rounded-2xl shadow-lg border-t-8 border-orange-400">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-orange-600 flex items-center gap-2" data-en="1. Linear Scale (Ruler)" data-th="1. สเกลเส้นตรง (ไม้บรรทัด)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" /></svg>
+                    1. Linear Scale (Ruler)
+                </h2>
+                <button onclick="generateNewObject()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-md hover:bg-slate-700 focus:ring-4 focus:ring-slate-300 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span data-en="Generate New Object" data-th="สุ่มวัตถุใหม่">Generate New Object</span>
+                </button>
+            </div>
+            
+            <div class="bg-orange-50 p-4 rounded-xl border border-orange-100 mb-6">
+                <p class="text-sm text-slate-700 font-medium leading-relaxed" data-en="<strong>Smallest Division:</strong> 0.1 cm (1 mm)<br><strong>Uncertainty:</strong> ±0.05 cm <span class='text-orange-600'>(Reason: Limit of reading and estimating between lines)</span>" data-th="<strong>ความละเอียดสเกล:</strong> 0.1 ซม. (1 มม.)<br><strong>ความคลาดเคลื่อน:</strong> ±0.05 ซม. <span class='text-orange-600'>(เหตุผล: ขีดจำกัดของการอ่านและการคาดคะเนด้วยสายตาระหว่างช่อง)</span>">
+                    <strong>Smallest Division:</strong> 0.1 cm (1 mm)<br><strong>Uncertainty:</strong> ±0.05 cm <span class='text-orange-600'>(Reason: Limit of reading and estimating between lines)</span>
+                </p>
+            </div>
+
+            <div id="ruler-container" class="w-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden relative shadow-inner mb-8">
+                <canvas id="rulerCanvas" class="w-full h-[220px]"></canvas>
+            </div>
+
+            <div class="bg-slate-100 p-8 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-blue-500">
+                        <h4 class="font-bold text-blue-700 mb-2" data-en="Step 1: Main Scale" data-th="ขั้นที่ 1: สเกลหลัก">Step 1: Main Scale</h4>
+                        <p id="r-step1" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-blue-400">
+                        <h4 class="font-bold text-blue-600 mb-2" data-en="Step 2: Minor Scale" data-th="ขั้นที่ 2: สเกลย่อย">Step 2: Minor Scale</h4>
+                        <p id="r-step2" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-600 mb-2" data-en="Step 3: Estimated" data-th="ขั้นที่ 3: คาดคะเน">Step 3: Estimated</h4>
+                        <p id="r-step3" class="text-slate-600">-</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border-2 border-orange-200 text-center shadow-inner flex flex-col items-center">
+                    <span class="text-slate-500 font-bold tracking-widest uppercase mb-2 block" data-en="Measurement ± Uncertainty" data-th="ค่าที่อ่านได้ ± ความคลาดเคลื่อน">Measurement ± Uncertainty</span>
+                    <div class="text-4xl md:text-5xl font-black text-slate-800 py-2">
+                        <span id="r-final" class="text-orange-600">0.00</span>
+                        <span class="text-slate-400 mx-2">&plusmn;</span>
+                        <span class="text-blue-600">0.05</span>
+                        <span class="text-2xl text-slate-500 ml-2">cm</span>
+                    </div>
+                    <div class="mt-3 inline-flex items-center gap-2 bg-orange-100 text-orange-800 text-sm px-4 py-1.5 rounded-full font-bold shadow-sm border border-orange-300">
+                        <span data-en="Significant Figures:" data-th="จำนวนเลขนัยสำคัญ:">Significant Figures:</span> 
+                        <span id="r-sigfigs" class="text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Pressure Gauge Simulator -->
+        <section class="p-8 bg-white rounded-2xl shadow-lg border-t-8 border-teal-500">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-teal-600 flex items-center gap-2" data-en="2. Circular Scale (Pressure Gauge)" data-th="2. สเกลวงกลม (เกจวัดความดัน)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    2. Circular Scale (Pressure Gauge)
+                </h2>
+                <button onclick="generateNewGauge()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-md hover:bg-slate-700 focus:ring-4 focus:ring-slate-300 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span data-en="Simulate Pressure" data-th="สุ่มค่าความดัน">Simulate Pressure</span>
+                </button>
+            </div>
+            
+            <div class="bg-teal-50 p-4 rounded-xl border border-teal-100 mb-6">
+                <p class="text-sm text-slate-700 font-medium leading-relaxed" data-en="<strong>Smallest Division:</strong> 1 psi<br><strong>Uncertainty:</strong> ±0.5 psi <span class='text-teal-600'>(Reason: Limit of analog reading and needle thickness)</span>" data-th="<strong>ความละเอียดสเกล:</strong> 1 psi<br><strong>ความคลาดเคลื่อน:</strong> ±0.5 psi <span class='text-teal-600'>(เหตุผล: ขีดจำกัดของสเกลแบบเข็มและความหนาของเข็ม)</span>">
+                    <strong>Smallest Division:</strong> 1 psi<br><strong>Uncertainty:</strong> ±0.5 psi <span class='text-teal-600'>(Reason: Limit of analog reading and needle thickness)</span>
+                </p>
+            </div>
+
+            <div id="gauge-container" class="w-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden relative shadow-inner mb-8 flex justify-center py-6">
+                <canvas id="gaugeCanvas" class="w-[300px] h-[300px] sm:w-[350px] sm:h-[350px] max-w-full"></canvas>
+            </div>
+
+            <div class="bg-slate-100 p-8 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-teal-600">
+                        <h4 class="font-bold text-teal-700 mb-2" data-en="Step 1: Major Mark" data-th="ขั้นที่ 1: ขีดหลัก">Step 1: Major Mark</h4>
+                        <p id="g-step1" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-teal-400">
+                        <h4 class="font-bold text-teal-600 mb-2" data-en="Step 2: Minor Marks" data-th="ขั้นที่ 2: ขีดย่อย">Step 2: Minor Marks</h4>
+                        <p id="g-step2" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-rose-500">
+                        <h4 class="font-bold text-rose-600 mb-2" data-en="Step 3: Estimated" data-th="ขั้นที่ 3: คาดคะเน">Step 3: Estimated</h4>
+                        <p id="g-step3" class="text-slate-600">-</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border-2 border-teal-200 text-center shadow-inner flex flex-col items-center">
+                    <span class="text-slate-500 font-bold tracking-widest uppercase mb-2 block" data-en="Measurement ± Uncertainty" data-th="ค่าที่อ่านได้ ± ความคลาดเคลื่อน">Measurement ± Uncertainty</span>
+                    <div class="text-4xl md:text-5xl font-black text-slate-800 py-2">
+                        <span id="g-final" class="text-teal-600">0.0</span>
+                        <span class="text-slate-400 mx-2">&plusmn;</span>
+                        <span class="text-blue-600">0.5</span>
+                        <span class="text-2xl text-slate-500 ml-2">psi</span>
+                    </div>
+                    <div class="mt-3 inline-flex items-center gap-2 bg-teal-100 text-teal-800 text-sm px-4 py-1.5 rounded-full font-bold shadow-sm border border-teal-300">
+                        <span data-en="Significant Figures:" data-th="จำนวนเลขนัยสำคัญ:">Significant Figures:</span> 
+                        <span id="g-sigfigs" class="text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Volume Simulator -->
+        <section class="p-8 bg-white rounded-2xl shadow-lg border-t-8 border-purple-500">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-purple-600 flex items-center gap-2" data-en="3. Volume Scale (Graduated Cylinder)" data-th="3. สเกลปริมาตร (กระบอกตวง)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" /></svg>
+                    3. Volume Scale (Graduated Cylinder)
+                </h2>
+                <button onclick="generateNewVolume()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-md hover:bg-slate-700 focus:ring-4 focus:ring-slate-300 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    <span data-en="Pour Liquid" data-th="สุ่มรินของเหลว">Pour Liquid</span>
+                </button>
+            </div>
+            
+            <div class="bg-purple-50 p-4 rounded-xl border border-purple-100 mb-6 flex flex-col md:flex-row gap-4 justify-between md:items-center">
+                <p class="text-sm text-slate-700 font-medium leading-relaxed" data-en="<strong>Smallest Division:</strong> 1 mL<br><strong>Uncertainty:</strong> ±0.5 mL <span class='text-purple-600'>(Reason: Limit of estimating the meniscus curve)</span>" data-th="<strong>ความละเอียดสเกล:</strong> 1 mL<br><strong>ความคลาดเคลื่อน:</strong> ±0.5 mL <span class='text-purple-600'>(เหตุผล: ขีดจำกัดของการกะระยะระดับความโค้งของของเหลว)</span>">
+                    <strong>Smallest Division:</strong> 1 mL<br><strong>Uncertainty:</strong> ±0.5 mL <span class='text-purple-600'>(Reason: Limit of estimating the meniscus curve)</span>
+                </p>
+                <div class="bg-white p-3 rounded-lg border border-purple-200 shadow-sm text-sm">
+                    <span class="font-bold text-rose-600" data-en="Important Rule:" data-th="ข้อควรจำ:">Important Rule:</span>
+                    <span data-en="Always read the volume at the <strong>bottom of the meniscus</strong> (the curve)." data-th="ต้องอ่านค่าปริมาตรที่ <strong>จุดต่ำสุดของส่วนโค้ง (Meniscus)</strong> เสมอ">Always read the volume at the <strong>bottom of the meniscus</strong> (the curve).</span>
+                </div>
+            </div>
+
+            <div id="volume-container" class="w-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden relative shadow-inner mb-8 flex justify-center py-6">
+                <canvas id="volumeCanvas" class="w-full h-[350px]"></canvas>
+            </div>
+
+            <div class="bg-slate-100 p-8 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-purple-600">
+                        <h4 class="font-bold text-purple-700 mb-2" data-en="Step 1: Tens Mark" data-th="ขั้นที่ 1: ขีดหลักสิบ">Step 1: Tens Mark</h4>
+                        <p id="v-step1" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-purple-400">
+                        <h4 class="font-bold text-purple-600 mb-2" data-en="Step 2: Ones Marks" data-th="ขั้นที่ 2: ขีดย่อย">Step 2: Ones Marks</h4>
+                        <p id="v-step2" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-rose-500">
+                        <h4 class="font-bold text-rose-600 mb-2" data-en="Step 3: Estimated" data-th="ขั้นที่ 3: คาดคะเน">Step 3: Estimated</h4>
+                        <p id="v-step3" class="text-slate-600">-</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border-2 border-purple-200 text-center shadow-inner flex flex-col items-center">
+                    <span class="text-slate-500 font-bold tracking-widest uppercase mb-2 block" data-en="Measurement ± Uncertainty" data-th="ค่าที่อ่านได้ ± ความคลาดเคลื่อน">Measurement ± Uncertainty</span>
+                    <div class="text-4xl md:text-5xl font-black text-slate-800 py-2">
+                        <span id="v-final" class="text-purple-600">0.0</span>
+                        <span class="text-slate-400 mx-2">&plusmn;</span>
+                        <span class="text-blue-600">0.5</span>
+                        <span class="text-2xl text-slate-500 ml-2">mL</span>
+                    </div>
+                    <div class="mt-3 inline-flex items-center gap-2 bg-purple-100 text-purple-800 text-sm px-4 py-1.5 rounded-full font-bold shadow-sm border border-purple-300">
+                        <span data-en="Significant Figures:" data-th="จำนวนเลขนัยสำคัญ:">Significant Figures:</span> 
+                        <span id="v-sigfigs" class="text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Time Simulator -->
+        <section class="p-8 bg-white rounded-2xl shadow-lg border-t-8 border-rose-500">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <h2 class="text-2xl font-bold text-rose-600 flex items-center gap-2" data-en="4. Time Scale (Digital Stopwatch)" data-th="4. สเกลเวลา (นาฬิกาจับเวลาแบบดิจิทัล)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-7.364l-1.414 1.414M5.05 18.95l1.414-1.414m12.728 0l-1.414-1.414M5.05 5.05l1.414 1.414" /></svg>
+                    4. Time Scale (Digital Stopwatch)
+                </h2>
+                <button onclick="startNewTime()" class="w-full sm:w-auto px-6 py-3 bg-slate-800 text-white font-bold rounded-lg shadow-md hover:bg-slate-700 focus:ring-4 focus:ring-slate-300 transition-all flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span data-en="Start Motion" data-th="เริ่มปล่อยวัตถุ">Start Motion</span>
+                </button>
+            </div>
+            
+            <div class="bg-rose-50 p-4 rounded-xl border border-rose-100 mb-6 flex flex-col md:flex-row gap-4 justify-between md:items-center">
+                <p class="text-sm text-slate-700 font-medium leading-relaxed" data-en="<strong>Smallest Division:</strong> 0.01 s<br><strong>Uncertainty:</strong> ±0.20 s <span class='text-rose-600'>(Reason: Average human reaction time)</span>" data-th="<strong>ความละเอียดหน้าจอ:</strong> 0.01 วินาที<br><strong>ความคลาดเคลื่อน:</strong> ±0.20 วินาที <span class='text-rose-600'>(เหตุผล: ค่าเฉลี่ยปฏิกิริยาตอบสนองของบุคคล)</span>">
+                    <strong>Smallest Division:</strong> 0.01 s<br><strong>Uncertainty:</strong> ±0.20 s <span class='text-rose-600'>(Reason: Average human reaction time)</span>
+                </p>
+                <div class="bg-white p-3 rounded-lg border border-rose-200 shadow-sm text-sm">
+                    <span class="font-bold text-orange-600" data-en="Scenario:" data-th="สถานการณ์:">Scenario:</span>
+                    <span data-en="Start timing when passing point A, and stop at point B." data-th="เริ่มจับเวลาเมื่อผ่านจุด A และหยุดจับเวลาเมื่อผ่านจุด B">Start timing when passing point A, and stop at point B.</span>
+                </div>
+            </div>
+
+            <div id="time-container" class="w-full bg-slate-50 rounded-xl border border-slate-200 overflow-hidden relative shadow-inner mb-8 flex justify-center py-6">
+                <canvas id="timeCanvas" class="w-full h-[300px]"></canvas>
+            </div>
+
+            <div class="bg-slate-100 p-8 rounded-xl border border-slate-200">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-rose-600">
+                        <h4 class="font-bold text-rose-700 mb-2" data-en="Step 1: Screen Reading" data-th="ขั้นที่ 1: ค่าจากหน้าจอ">Step 1: Screen Reading</h4>
+                        <p id="t-step1" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-rose-400">
+                        <h4 class="font-bold text-rose-600 mb-2" data-en="Step 2: Human Error" data-th="ขั้นที่ 2: ความคลาดเคลื่อน">Step 2: Human Error</h4>
+                        <p id="t-step2" class="text-slate-600">-</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-lg shadow-sm border-l-4 border-orange-500">
+                        <h4 class="font-bold text-orange-600 mb-2" data-en="Step 3: Recording" data-th="ขั้นที่ 3: บันทึกค่า">Step 3: Recording</h4>
+                        <p id="t-step3" class="text-slate-600">-</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl border-2 border-rose-200 text-center shadow-inner flex flex-col items-center">
+                    <span class="text-slate-500 font-bold tracking-widest uppercase mb-2 block" data-en="Measurement ± Uncertainty" data-th="ค่าที่อ่านได้ ± ความคลาดเคลื่อน">Measurement ± Uncertainty</span>
+                    <div class="text-4xl md:text-5xl font-black text-slate-800 py-2">
+                        <span id="t-final" class="text-rose-600">0.00</span>
+                        <span class="text-slate-400 mx-2">&plusmn;</span>
+                        <span class="text-blue-600">0.20</span>
+                        <span class="text-2xl text-slate-500 ml-2">s</span>
+                    </div>
+                    <div class="mt-3 inline-flex items-center gap-2 bg-rose-100 text-rose-800 text-sm px-4 py-1.5 rounded-full font-bold shadow-sm border border-rose-300">
+                        <span data-en="Significant Figures:" data-th="จำนวนเลขนัยสำคัญ:">Significant Figures:</span> 
+                        <span id="t-sigfigs" class="text-lg">0</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-16 bg-slate-800 text-slate-300 py-8 text-center w-full">
+        <p class="mb-2 text-lg">Developed by <a href="https://opensimlab.org" target="_blank" class="text-blue-400 font-bold hover:text-blue-300 hover:underline transition-colors">opensimlab.org</a></p>
+        <p class="text-sm opacity-70">Code generated by AI Assistant</p>
+    </footer>
+
+    <script>
+        // --- Shared State ---
+        let currentLang = 'en';
+        
+        // --- Helper Function: Calculate Significant Figures ---
+        // Since our values are always >= 1.0 (no leading zeros before whole numbers)
+        // the number of sig figs is simply the count of digits after removing the decimal point.
+        function getSigFigsText(formattedNumberStr, isEn) {
+            const digitsOnly = formattedNumberStr.replace('.', '');
+            const count = digitsOnly.length;
+            const digitsList = digitsOnly.split('').join(', ');
+            return isEn ? `${count} digits (${digitsList})` : `${count} ตัว ได้แก่ ${digitsList}`;
+        }
+
+        // --- Language Toggle Logic ---
+        function setLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${lang}`);
+            });
+
+            const btnEn = document.getElementById('btn-lang-en');
+            const btnTh = document.getElementById('btn-lang-th');
+
+            if (lang === 'en') {
+                btnEn.className = "px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 bg-white text-blue-600 shadow-sm";
+                btnTh.className = "px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50";
+            } else {
+                btnEn.className = "px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 text-slate-500 hover:text-slate-700 hover:bg-slate-200/50";
+                btnTh.className = "px-6 py-2 text-base font-bold rounded-lg transition-all duration-300 bg-white text-orange-500 shadow-sm";
+            }
+
+            if (!rIsAnimating) updateRulerSteps();
+            if (!gIsAnimating) updateGaugeSteps();
+            if (typeof vIsAnimating !== 'undefined' && !vIsAnimating) updateVolumeSteps();
+            if (typeof tIsAnimating !== 'undefined' && !tIsAnimating && typeof tTargetTime !== 'undefined' && tTargetTime > 0) updateTimeSteps();
+        }
+
+        // ==========================================
+        // RULER SIMULATOR LOGIC
+        // ==========================================
+        let rData = { cm: 0, mm: 0, est: 0, total: 0 };
+        const rCanvas = document.getElementById('rulerCanvas');
+        const rCtx = rCanvas.getContext('2d');
+        const rContainer = document.getElementById('ruler-container');
+        
+        let rCurrentDraw = 0;
+        let rTarget = 0;
+        let rAnimId = null;
+        let rIsAnimating = false;
+        const R_MAX_CM = 15;
+
+        function drawRulerScene() {
+            const width = rCanvas.clientWidth;
+            const height = 220;
+            const pxPerCm = (width - 80) / R_MAX_CM; // 40px margin left/right
+
+            rCtx.clearRect(0, 0, width, height);
+
+            // Draw Object
+            if (rCurrentDraw > 0) {
+                const w = rCurrentDraw * pxPerCm;
+                const grad = rCtx.createLinearGradient(40, 60, 40, 100);
+                grad.addColorStop(0, '#60a5fa');
+                grad.addColorStop(1, '#3b82f6');
+                rCtx.fillStyle = grad;
+                rCtx.beginPath();
+                rCtx.roundRect(40, 60, w, 40, 4);
+                rCtx.fill();
+                rCtx.strokeStyle = '#1d4ed8';
+                rCtx.lineWidth = 2;
+                rCtx.stroke();
+            }
+
+            // Draw Ruler Base
+            rCtx.fillStyle = '#fef3c7';
+            rCtx.beginPath();
+            rCtx.roundRect(20, 110, (R_MAX_CM * pxPerCm) + 40, 60, 6);
+            rCtx.fill();
+            rCtx.strokeStyle = '#1e293b';
+            rCtx.lineWidth = 2;
+            rCtx.stroke();
+
+            // Draw Ruler Ticks
+            rCtx.fillStyle = '#1e293b';
+            rCtx.textAlign = 'center';
+            for (let i = 0; i <= R_MAX_CM * 10; i++) {
+                const x = 40 + (i * (pxPerCm / 10));
+                rCtx.beginPath();
+                rCtx.moveTo(x, 110);
+                if (i % 10 === 0) {
+                    rCtx.lineTo(x, 135); rCtx.lineWidth = 2; rCtx.stroke();
+                    rCtx.font = 'bold 16px Inter'; rCtx.textBaseline = 'top';
+                    rCtx.fillText(i / 10, x, 140);
+                } else if (i % 5 === 0) {
+                    rCtx.lineTo(x, 128); rCtx.lineWidth = 1.5; rCtx.stroke();
+                } else {
+                    rCtx.lineTo(x, 120); rCtx.lineWidth = 1; rCtx.stroke();
+                }
+            }
+            rCtx.fillStyle = '#64748b'; rCtx.font = 'bold 14px Inter';
+            rCtx.fillText('cm', 40 + (R_MAX_CM * pxPerCm) + 20, 140);
+
+            // Draw Guide Line
+            if (!rIsAnimating && rTarget > 0) {
+                const gx = 40 + (rTarget * pxPerCm);
+                rCtx.beginPath(); rCtx.setLineDash([5, 5]);
+                rCtx.moveTo(gx, 40); rCtx.lineTo(gx, 150);
+                rCtx.strokeStyle = '#ef4444'; rCtx.lineWidth = 2;
+                rCtx.stroke(); rCtx.setLineDash([]);
+            }
+        }
+
+        function animateRuler() {
+            if (!rIsAnimating) return;
+            const diff = rTarget - rCurrentDraw;
+            if (Math.abs(diff) > 0.005) {
+                rCurrentDraw += diff * 0.08;
+                drawRulerScene();
+                rAnimId = requestAnimationFrame(animateRuler);
+            } else {
+                rCurrentDraw = rTarget;
+                rIsAnimating = false;
+                drawRulerScene();
+                updateRulerSteps();
+            }
+        }
+
+        function generateNewObject() {
+            if (rAnimId) cancelAnimationFrame(rAnimId);
+            rData.cm = Math.floor(Math.random() * 12) + 2;
+            rData.mm = Math.floor(Math.random() * 10);
+            rData.est = Math.floor(Math.random() * 10);
+            rData.total = rData.cm + (rData.mm / 10) + (rData.est / 100);
+            
+            rTarget = rData.total;
+            rCurrentDraw = 0;
+            
+            document.getElementById('r-step1').innerText = '...';
+            document.getElementById('r-step2').innerText = '...';
+            document.getElementById('r-step3').innerText = '...';
+            document.getElementById('r-final').innerText = '0.00';
+            document.getElementById('r-sigfigs').innerText = '...';
+
+            rIsAnimating = true;
+            animateRuler();
+        }
+
+        function updateRulerSteps() {
+            const { cm, mm, est, total } = rData;
+            const isEn = currentLang === 'en';
+            
+            document.getElementById('r-step1').innerHTML = isEn
+                ? `Passed whole number: <strong class="text-slate-800">${cm} cm</strong>.`
+                : `วัตถุยืดเลยขีดเซนติเมตรที่: <strong class="text-slate-800">${cm} ซม.</strong>`;
+            
+            document.getElementById('r-step2').innerHTML = isEn
+                ? `Passed <strong class="text-slate-800">${mm} mm</strong> lines (0.${mm} cm).<br>Certain: <strong class="text-blue-700">${cm}.${mm} cm</strong>.`
+                : `เลยมาอีก <strong class="text-slate-800">${mm} ขีดเล็ก</strong> (0.${mm} ซม.)<br>ค่าที่แน่นอน: <strong class="text-blue-700">${cm}.${mm} ซม.</strong>`;
+            
+            document.getElementById('r-step3').innerHTML = isEn
+                ? `Estimated gap is <strong class="text-orange-600">0.0${est} cm</strong>.`
+                : `คาดคะเนระยะห่างได้ <strong class="text-orange-600">0.0${est} ซม.</strong>`;
+            
+            const finalStr = total.toFixed(2);
+            document.getElementById('r-final').innerText = finalStr;
+            document.getElementById('r-sigfigs').innerText = getSigFigsText(finalStr, isEn);
+        }
+
+        // ==========================================
+        // GAUGE SIMULATOR LOGIC
+        // ==========================================
+        let gData = { major: 0, minor: 0, est: 0, total: 0 };
+        const gCanvas = document.getElementById('gaugeCanvas');
+        const gCtx = gCanvas.getContext('2d');
+        const gContainer = document.getElementById('gauge-container');
+        
+        let gCurrentDraw = 0;
+        let gTarget = 0;
+        let gAnimId = null;
+        let gIsAnimating = false;
+        const G_MAX_PSI = 50;
+        const G_START_ANGLE = Math.PI * 0.75; // 135 deg
+        const G_SWEEP = Math.PI * 1.5; // 270 deg
+
+        function drawGaugeScene() {
+            const w = gCanvas.clientWidth;
+            const h = gCanvas.clientHeight;
+            gCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const cy = h / 2 + 10;
+            const r = Math.min(w, h) / 2 - 20;
+
+            // Draw Dial Background
+            gCtx.beginPath();
+            gCtx.arc(cx, cy, r, 0, 2*Math.PI);
+            gCtx.fillStyle = '#ffffff';
+            gCtx.fill();
+            gCtx.lineWidth = 6;
+            gCtx.strokeStyle = '#cbd5e1'; // slate-300 rim
+            gCtx.stroke();
+
+            // Inner styling
+            gCtx.beginPath();
+            gCtx.arc(cx, cy, r - 6, 0, 2*Math.PI);
+            gCtx.strokeStyle = '#f1f5f9';
+            gCtx.lineWidth = 2;
+            gCtx.stroke();
+
+            // Draw Ticks & Labels
+            for(let i = 0; i <= G_MAX_PSI; i++) {
+                const angle = G_START_ANGLE + (i / G_MAX_PSI) * G_SWEEP;
+                const isMajor = i % 10 === 0;
+                const isHalf = i % 5 === 0;
+                const innerR = isMajor ? r - 20 : (isHalf ? r - 15 : r - 8);
+
+                gCtx.beginPath();
+                gCtx.moveTo(cx + Math.cos(angle) * innerR, cy + Math.sin(angle) * innerR);
+                gCtx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+                gCtx.lineWidth = isMajor ? 3 : (isHalf ? 2 : 1);
+                gCtx.strokeStyle = isMajor ? '#1e293b' : '#64748b';
+                gCtx.stroke();
+
+                if(isMajor) {
+                    gCtx.fillStyle = '#0f172a';
+                    gCtx.font = 'bold 18px Inter';
+                    gCtx.textAlign = 'center';
+                    gCtx.textBaseline = 'middle';
+                    const textR = r - 35;
+                    gCtx.fillText(i.toString(), cx + Math.cos(angle) * textR, cy + Math.sin(angle) * textR);
+                }
+            }
+
+            // Unit Label
+            gCtx.fillStyle = '#64748b';
+            gCtx.font = 'bold 14px Inter';
+            gCtx.textAlign = 'center';
+            gCtx.fillText('psi', cx, cy + r - 45);
+
+            // Draw Target Guide Line (Ghost Needle) if not animating
+            if (!gIsAnimating && gTarget > 0) {
+                const targetAngle = G_START_ANGLE + (gTarget / G_MAX_PSI) * G_SWEEP;
+                gCtx.beginPath();
+                gCtx.moveTo(cx, cy);
+                gCtx.lineTo(cx + Math.cos(targetAngle) * (r - 10), cy + Math.sin(targetAngle) * (r - 10));
+                gCtx.lineWidth = 1;
+                gCtx.setLineDash([4, 4]);
+                gCtx.strokeStyle = '#f43f5e'; // rose-500
+                gCtx.stroke();
+                gCtx.setLineDash([]);
+            }
+
+            // Draw Active Needle
+            const needleAngle = G_START_ANGLE + (gCurrentDraw / G_MAX_PSI) * G_SWEEP;
+            gCtx.save();
+            gCtx.translate(cx, cy);
+            gCtx.rotate(needleAngle);
+            
+            // Needle shape
+            gCtx.beginPath();
+            gCtx.moveTo(0, -4);
+            gCtx.lineTo(r - 15, 0); // tip
+            gCtx.lineTo(0, 4);
+            gCtx.lineTo(-15, 0); // tail
+            gCtx.fillStyle = '#ef4444'; // red-500
+            gCtx.fill();
+            gCtx.restore();
+
+            // Center Pin
+            gCtx.beginPath();
+            gCtx.arc(cx, cy, 8, 0, 2*Math.PI);
+            gCtx.fillStyle = '#0f172a';
+            gCtx.fill();
+            gCtx.beginPath();
+            gCtx.arc(cx, cy, 3, 0, 2*Math.PI);
+            gCtx.fillStyle = '#94a3b8';
+            gCtx.fill();
+        }
+
+        function animateGauge() {
+            if (!gIsAnimating) return;
+            const diff = gTarget - gCurrentDraw;
+            if (Math.abs(diff) > 0.05) {
+                gCurrentDraw += diff * 0.08;
+                drawGaugeScene();
+                gAnimId = requestAnimationFrame(animateGauge);
+            } else {
+                gCurrentDraw = gTarget;
+                gIsAnimating = false;
+                drawGaugeScene();
+                updateGaugeSteps();
+            }
+        }
+
+        function generateNewGauge() {
+            if (gAnimId) cancelAnimationFrame(gAnimId);
+            
+            // Pick value between 5.0 and 45.0
+            gData.major = (Math.floor(Math.random() * 4) + 1) * 10; // 10, 20, 30, 40
+            gData.minor = Math.floor(Math.random() * 10); // 0 to 9
+            gData.est = Math.floor(Math.random() * 10); // 0 to 9 tenths
+            
+            gData.total = gData.major + gData.minor + (gData.est / 10);
+            gTarget = gData.total;
+            gCurrentDraw = 0; // Starts from 0
+
+            document.getElementById('g-step1').innerText = '...';
+            document.getElementById('g-step2').innerText = '...';
+            document.getElementById('g-step3').innerText = '...';
+            document.getElementById('g-final').innerText = '0.0';
+            document.getElementById('g-sigfigs').innerText = '...';
+
+            gIsAnimating = true;
+            animateGauge();
+        }
+
+        function updateGaugeSteps() {
+            const { major, minor, est, total } = gData;
+            const certain = major + minor;
+            const isEn = currentLang === 'en';
+            
+            document.getElementById('g-step1').innerHTML = isEn
+                ? `Needle passed major mark: <strong class="text-slate-800">${major} psi</strong>.`
+                : `เข็มชี้เลยตัวเลขหลัก: <strong class="text-slate-800">${major} psi</strong>`;
+            
+            document.getElementById('g-step2').innerHTML = isEn
+                ? `Passed <strong class="text-slate-800">${minor} small ticks</strong> (+${minor} psi).<br>Certain: <strong class="text-teal-700">${certain} psi</strong>.`
+                : `เลยขีดเล็กมา <strong class="text-slate-800">${minor} ขีด</strong> (+${minor} psi)<br>ค่าที่แน่นอน: <strong class="text-teal-700">${certain} psi</strong>`;
+            
+            document.getElementById('g-step3').innerHTML = isEn
+                ? `Estimated gap is <strong class="text-rose-600">0.${est} psi</strong>.`
+                : `คาดคะเนระยะห่างได้ <strong class="text-rose-600">0.${est} psi</strong>`;
+            
+            const finalStr = total.toFixed(1);
+            document.getElementById('g-final').innerText = finalStr;
+            document.getElementById('g-sigfigs').innerText = getSigFigsText(finalStr, isEn);
+        }
+
+        // ==========================================
+        // VOLUME SIMULATOR LOGIC
+        // ==========================================
+        let vData = { tens: 0, ones: 0, est: 0, total: 0 };
+        const vCanvas = document.getElementById('volumeCanvas');
+        const vCtx = vCanvas.getContext('2d');
+        const vContainer = document.getElementById('volume-container');
+        
+        let vCurrentDraw = 0;
+        let vTarget = 0;
+        let vAnimId = null;
+        let vIsAnimating = false;
+        
+        const V_MAX_ML = 50;
+        const CYL_WIDTH = 90;
+        const CYL_HEIGHT = 280;
+        const CYL_BOTTOM_Y = 320;
+        const MENISCUS_DEPTH = 12;
+
+        function drawVolumeScene() {
+            const w = vCanvas.clientWidth;
+            const h = vCanvas.clientHeight;
+            vCtx.clearRect(0, 0, w, h);
+
+            const cx = w / 2;
+            const pxPerMl = (CYL_HEIGHT - 30) / V_MAX_ML;
+
+            // Draw Liquid
+            if (vCurrentDraw > 0) {
+                const liquidY = CYL_BOTTOM_Y - (vCurrentDraw * pxPerMl);
+                
+                // Liquid Body
+                vCtx.fillStyle = 'rgba(168, 85, 247, 0.4)'; // purple-500 with opacity
+                vCtx.beginPath();
+                vCtx.moveTo(cx - CYL_WIDTH/2 + 2, CYL_BOTTOM_Y - 2);
+                vCtx.lineTo(cx + CYL_WIDTH/2 - 2, CYL_BOTTOM_Y - 2);
+                vCtx.lineTo(cx + CYL_WIDTH/2 - 2, liquidY - MENISCUS_DEPTH);
+                
+                // Meniscus Curve (reading taken at lowest point `liquidY`)
+                vCtx.quadraticCurveTo(cx, liquidY + MENISCUS_DEPTH, cx - CYL_WIDTH/2 + 2, liquidY - MENISCUS_DEPTH);
+                vCtx.fill();
+                
+                // Liquid top line (Meniscus outline)
+                vCtx.beginPath();
+                vCtx.moveTo(cx - CYL_WIDTH/2 + 2, liquidY - MENISCUS_DEPTH);
+                vCtx.quadraticCurveTo(cx, liquidY + MENISCUS_DEPTH, cx + CYL_WIDTH/2 - 2, liquidY - MENISCUS_DEPTH);
+                vCtx.strokeStyle = '#9333ea'; // purple-600
+                vCtx.lineWidth = 3;
+                vCtx.stroke();
+            }
+
+            // Draw Cylinder
+            vCtx.beginPath();
+            // Left wall
+            vCtx.moveTo(cx - CYL_WIDTH/2, CYL_BOTTOM_Y - CYL_HEIGHT);
+            vCtx.lineTo(cx - CYL_WIDTH/2, CYL_BOTTOM_Y);
+            // Bottom
+            vCtx.lineTo(cx + CYL_WIDTH/2, CYL_BOTTOM_Y);
+            // Right wall
+            vCtx.lineTo(cx + CYL_WIDTH/2, CYL_BOTTOM_Y - CYL_HEIGHT);
+            
+            // Lips
+            vCtx.moveTo(cx - CYL_WIDTH/2 - 5, CYL_BOTTOM_Y - CYL_HEIGHT);
+            vCtx.lineTo(cx - CYL_WIDTH/2 + 5, CYL_BOTTOM_Y - CYL_HEIGHT);
+            vCtx.moveTo(cx + CYL_WIDTH/2 - 5, CYL_BOTTOM_Y - CYL_HEIGHT);
+            vCtx.lineTo(cx + CYL_WIDTH/2 + 5, CYL_BOTTOM_Y - CYL_HEIGHT);
+
+            vCtx.strokeStyle = '#cbd5e1'; // slate-300
+            vCtx.lineWidth = 4;
+            vCtx.stroke();
+
+            // Glass Reflection
+            vCtx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+            vCtx.fillRect(cx - CYL_WIDTH/2 + 5, CYL_BOTTOM_Y - CYL_HEIGHT + 10, 10, CYL_HEIGHT - 20);
+
+            // Draw Ticks (10 mL to 50 mL)
+            vCtx.fillStyle = '#1e293b';
+            vCtx.textAlign = 'right';
+            vCtx.textBaseline = 'middle';
+            
+            for (let i = 0; i <= V_MAX_ML; i++) {
+                const y = CYL_BOTTOM_Y - (i * pxPerMl);
+                const isMajor = i % 10 === 0;
+                const isHalf = i % 5 === 0;
+                
+                vCtx.beginPath();
+                vCtx.moveTo(cx - CYL_WIDTH/2, y);
+                
+                if (isMajor) {
+                    vCtx.lineTo(cx - CYL_WIDTH/2 + 20, y);
+                    vCtx.lineWidth = 2;
+                    if(i > 0) { // Don't label 0
+                        vCtx.font = 'bold 16px Inter';
+                        vCtx.fillText(i, cx - CYL_WIDTH/2 - 10, y);
+                    }
+                } else if (isHalf) {
+                    vCtx.lineTo(cx - CYL_WIDTH/2 + 15, y);
+                    vCtx.lineWidth = 1.5;
+                } else {
+                    vCtx.lineTo(cx - CYL_WIDTH/2 + 10, y);
+                    vCtx.lineWidth = 1;
+                }
+                vCtx.strokeStyle = '#475569';
+                vCtx.stroke();
+            }
+
+            // Target Guide Line (Ghost Line at BOTTOM of meniscus)
+            if (!vIsAnimating && vTarget > 0) {
+                const targetY = CYL_BOTTOM_Y - (vTarget * pxPerMl);
+                vCtx.beginPath();
+                vCtx.moveTo(cx - CYL_WIDTH/2 - 30, targetY);
+                vCtx.lineTo(cx + CYL_WIDTH/2 + 30, targetY);
+                vCtx.lineWidth = 2;
+                vCtx.setLineDash([6, 4]);
+                vCtx.strokeStyle = '#f43f5e'; // rose-500
+                vCtx.stroke();
+                vCtx.setLineDash([]);
+            }
+        }
+
+        function animateVolume() {
+            if (!vIsAnimating) return;
+            const diff = vTarget - vCurrentDraw;
+            if (Math.abs(diff) > 0.05) {
+                vCurrentDraw += diff * 0.1;
+                drawVolumeScene();
+                vAnimId = requestAnimationFrame(animateVolume);
+            } else {
+                vCurrentDraw = vTarget;
+                vIsAnimating = false;
+                drawVolumeScene();
+                updateVolumeSteps();
+            }
+        }
+
+        function generateNewVolume() {
+            if (vAnimId) cancelAnimationFrame(vAnimId);
+            
+            // Value between 10.0 and 49.9
+            vData.tens = (Math.floor(Math.random() * 4) + 1) * 10; // 10, 20, 30, 40
+            vData.ones = Math.floor(Math.random() * 10); // 0 to 9
+            vData.est = Math.floor(Math.random() * 10); // 0 to 9 tenths
+            
+            vData.total = vData.tens + vData.ones + (vData.est / 10);
+            vTarget = vData.total;
+            vCurrentDraw = 0; // Starts from empty
+
+            document.getElementById('v-step1').innerText = '...';
+            document.getElementById('v-step2').innerText = '...';
+            document.getElementById('v-step3').innerText = '...';
+            document.getElementById('v-final').innerText = '0.0';
+            document.getElementById('v-sigfigs').innerText = '...';
+
+            vIsAnimating = true;
+            animateVolume();
+        }
+
+        function updateVolumeSteps() {
+            const { tens, ones, est, total } = vData;
+            const certain = tens + ones;
+            const isEn = currentLang === 'en';
+            
+            document.getElementById('v-step1').innerHTML = isEn
+                ? `Meniscus passed the tens mark: <strong class="text-slate-800">${tens} mL</strong>.`
+                : `จุดต่ำสุดของน้ำเลยขีดหลักสิบที่: <strong class="text-slate-800">${tens} mL</strong>`;
+            
+            document.getElementById('v-step2').innerHTML = isEn
+                ? `Passed <strong class="text-slate-800">${ones} small ticks</strong> (+${ones} mL).<br>Certain: <strong class="text-purple-700">${certain} mL</strong>.`
+                : `เลยขีดเล็กมา <strong class="text-slate-800">${ones} ขีด</strong> (+${ones} mL)<br>ค่าที่แน่นอน: <strong class="text-purple-700">${certain} mL</strong>`;
+            
+            document.getElementById('v-step3').innerHTML = isEn
+                ? `Estimated gap is <strong class="text-rose-600">0.${est} mL</strong>.`
+                : `คาดคะเนระยะห่างได้ <strong class="text-rose-600">0.${est} mL</strong>`;
+            
+            const finalStr = total.toFixed(1);
+            document.getElementById('v-final').innerText = finalStr;
+            document.getElementById('v-sigfigs').innerText = getSigFigsText(finalStr, isEn);
+        }
+
+        // ==========================================
+        // TIME SIMULATOR LOGIC
+        // ==========================================
+        let tTargetTime = 0; // True time A to B
+        const tCanvas = document.getElementById('timeCanvas');
+        const tCtx = tCanvas.getContext('2d');
+        const tContainer = document.getElementById('time-container');
+        
+        let tCurrentTimer = 0; // Displayed time on watch
+        let tAnimId = null;
+        let tIsAnimating = false;
+        let tStartTime = 0;
+        
+        // Physics logic variables
+        let trackStartX, trackEndX, pointAX, pointBX, distAB, velocity, timeToA, timeTotal;
+
+        function drawTimeScene(elapsedSec, timerValue) {
+            const w = tCanvas.clientWidth;
+            const h = tCanvas.clientHeight;
+            tCtx.clearRect(0, 0, w, h);
+
+            // Calculate layout dynamics if not set
+            trackStartX = 40;
+            trackEndX = w - 40;
+            pointAX = 100;
+            pointBX = w - 100;
+            distAB = pointBX - pointAX;
+
+            // 1. Draw Track & Object
+            const trackY = 80;
+
+            // Track line
+            tCtx.beginPath();
+            tCtx.moveTo(20, trackY);
+            tCtx.lineTo(w - 20, trackY);
+            tCtx.lineWidth = 4;
+            tCtx.strokeStyle = '#cbd5e1'; // slate-300
+            tCtx.stroke();
+
+            // Point A and B Markers
+            tCtx.fillStyle = '#f43f5e'; // rose-500
+            tCtx.font = 'bold 16px Inter';
+            tCtx.textAlign = 'center';
+            
+            // Marker A
+            tCtx.fillRect(pointAX - 2, trackY - 20, 4, 40);
+            tCtx.fillText('A', pointAX, trackY - 30);
+            
+            // Marker B
+            tCtx.fillRect(pointBX - 2, trackY - 20, 4, 40);
+            tCtx.fillText('B', pointBX, trackY - 30);
+
+            // Determine object position
+            let objX = trackStartX;
+            if (tTargetTime > 0) {
+                velocity = distAB / tTargetTime;
+                objX = trackStartX + (velocity * elapsedSec);
+                if (objX > trackEndX) objX = trackEndX;
+            }
+
+            // Object (Box)
+            tCtx.fillStyle = '#3b82f6'; // blue-500
+            tCtx.beginPath();
+            tCtx.roundRect(objX - 15, trackY - 15, 30, 30, 6);
+            tCtx.fill();
+            tCtx.strokeStyle = '#1e3a8a';
+            tCtx.lineWidth = 2;
+            tCtx.stroke();
+
+            // 2. Draw Digital Stopwatch Face
+            const cx = w / 2;
+            const cy = 210;
+
+            // Stopwatch body
+            tCtx.fillStyle = '#1e293b'; // slate-800
+            tCtx.beginPath();
+            tCtx.roundRect(cx - 100, cy - 40, 200, 80, 16);
+            tCtx.fill();
+            
+            // Stopwatch screen
+            tCtx.fillStyle = '#0f172a'; // slate-900
+            tCtx.beginPath();
+            tCtx.roundRect(cx - 85, cy - 25, 170, 50, 8);
+            tCtx.fill();
+            tCtx.strokeStyle = '#334155';
+            tCtx.lineWidth = 2;
+            tCtx.stroke();
+
+            // Stopwatch buttons (Top)
+            tCtx.fillStyle = '#ef4444'; // Red button
+            tCtx.fillRect(cx - 40, cy - 50, 20, 10);
+            tCtx.fillStyle = '#3b82f6'; // Blue button
+            tCtx.fillRect(cx + 20, cy - 50, 20, 10);
+
+            // Digital Text
+            tCtx.fillStyle = '#22c55e'; // green-500
+            tCtx.font = 'bold 36px monospace';
+            tCtx.textAlign = 'center';
+            tCtx.textBaseline = 'middle';
+            
+            // Format time as 00.00
+            let timeStr = timerValue.toFixed(2);
+            if (timerValue < 10) timeStr = "0" + timeStr;
+            
+            tCtx.fillText(timeStr, cx, cy);
+            
+            // Label
+            tCtx.fillStyle = '#64748b';
+            tCtx.font = '12px Inter';
+            tCtx.fillText('SEC', cx + 60, cy + 12);
+        }
+
+        function animateTime(timestamp) {
+            if (!tIsAnimating) return;
+            
+            let elapsedSec = (timestamp - tStartTime) / 1000;
+            
+            // Recalculate parameters continuously in case of resize
+            velocity = distAB / tTargetTime;
+            timeToA = (pointAX - trackStartX) / velocity;
+            timeTotal = (trackEndX - trackStartX) / velocity;
+
+            // Timer logic: Starts at A, Stops at B
+            if (elapsedSec < timeToA) {
+                tCurrentTimer = 0; // Not at A yet
+            } else if (elapsedSec < timeToA + tTargetTime) {
+                tCurrentTimer = elapsedSec - timeToA; // Between A and B
+            } else {
+                tCurrentTimer = tTargetTime; // Passed B
+            }
+            
+            // Stop animation when reaching the far right
+            if (elapsedSec >= timeTotal) {
+                tIsAnimating = false;
+                drawTimeScene(timeTotal, tCurrentTimer);
+                updateTimeSteps();
+            } else {
+                drawTimeScene(elapsedSec, tCurrentTimer);
+                tAnimId = requestAnimationFrame(animateTime);
+            }
+        }
+
+        function startNewTime() {
+            if (tAnimId) cancelAnimationFrame(tAnimId);
+            
+            // Generate random transit time between 2.00s and 6.00s
+            tTargetTime = (Math.random() * 4 + 2);
+            tTargetTime = parseFloat(tTargetTime.toFixed(2));
+            
+            tCurrentTimer = 0;
+
+            document.getElementById('t-step1').innerText = '...';
+            document.getElementById('t-step2').innerText = '...';
+            document.getElementById('t-step3').innerText = '...';
+            document.getElementById('t-final').innerText = '0.00';
+            document.getElementById('t-sigfigs').innerText = '...';
+
+            // Draw initial state
+            drawTimeScene(0, 0);
+            
+            // Wait slightly before moving
+            setTimeout(() => {
+                tStartTime = performance.now();
+                tIsAnimating = true;
+                requestAnimationFrame(animateTime);
+            }, 500);
+        }
+
+        function updateTimeSteps() {
+            const isEn = currentLang === 'en';
+            
+            document.getElementById('t-step1').innerHTML = isEn
+                ? `The digital screen shows exactly: <strong class="text-slate-800">${tTargetTime.toFixed(2)} s</strong>.`
+                : `อ่านค่าที่ปรากฏบนหน้าปัดดิจิทัลได้: <strong class="text-slate-800">${tTargetTime.toFixed(2)} วิ</strong>`;
+            
+            document.getElementById('t-step2').innerHTML = isEn
+                ? `Digital tools have ±0.01s error, but human reaction (pressing start/stop) dominates at <strong class="text-rose-600">±0.20 s</strong>.`
+                : `หน้าจอดิจิทัลละเอียดระดับ 0.01 วิ แต่การกดเริ่ม/หยุดด้วยมือ มีความคลาดเคลื่อนจากปฏิกิริยาบุคคลเป็นหลัก <strong class="text-rose-600">±0.20 วิ</strong>`;
+            
+            document.getElementById('t-step3').innerHTML = isEn
+                ? `Combine reading with human error: <strong class="text-orange-600">${tTargetTime.toFixed(2)} ± 0.20 s</strong>.`
+                : `บันทึกค่าที่อ่านได้ ร่วมกับความคลาดเคลื่อนจากคน: <strong class="text-orange-600">${tTargetTime.toFixed(2)} ± 0.20 วิ</strong>`;
+            
+            const finalStr = tTargetTime.toFixed(2);
+            document.getElementById('t-final').innerText = finalStr;
+            document.getElementById('t-sigfigs').innerText = getSigFigsText(finalStr, isEn);
+        }
+
+        // ==========================================
+        // SYSTEM INIT & RESIZE
+        // ==========================================
+        function resizeCanvases() {
+            const dpr = window.devicePixelRatio || 1;
+
+            // Ruler
+            const rWidth = rContainer.clientWidth;
+            rCanvas.width = rWidth * dpr;
+            rCanvas.height = 220 * dpr;
+            rCanvas.style.width = rWidth + 'px';
+            rCanvas.style.height = 220 + 'px';
+            rCtx.scale(dpr, dpr);
+            drawRulerScene();
+
+            // Gauge
+            const gSize = gCanvas.clientWidth; 
+            gCanvas.width = gSize * dpr;
+            gCanvas.height = gSize * dpr;
+            gCtx.scale(dpr, dpr);
+            drawGaugeScene();
+
+            // Volume
+            const vWidth = vContainer.clientWidth;
+            vCanvas.width = vWidth * dpr;
+            vCanvas.height = 350 * dpr;
+            vCanvas.style.width = vWidth + 'px';
+            vCanvas.style.height = 350 + 'px';
+            vCtx.scale(dpr, dpr);
+            drawVolumeScene();
+
+            // Time
+            const tWidth = tContainer.clientWidth;
+            tCanvas.width = tWidth * dpr;
+            tCanvas.height = 300 * dpr;
+            tCanvas.style.width = tWidth + 'px';
+            tCanvas.style.height = 300 + 'px';
+            tCtx.scale(dpr, dpr);
+            if (tTargetTime === 0) drawTimeScene(0, 0); 
+            else drawTimeScene((trackEndX - trackStartX)/(distAB/tTargetTime), tTargetTime);
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+
+        window.onload = () => {
+            setLang('en');
+            // Wait slightly for layout to settle before sizing canvas
+            setTimeout(() => {
+                resizeCanvases();
+                generateNewObject();
+                generateNewGauge();
+                generateNewVolume();
+                drawTimeScene(0); // Init Time canvas
+            }, 50);
+        };
+    </script>
+</body>
+</html>
